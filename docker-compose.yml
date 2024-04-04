@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  db:
+    container_name: postgres_database
+    image: postgres:15.1
+    volumes:
+      # - postgres-db:/var/lib/postgresql/data #este volumen es para asignar el lugar donde se creara el volumen dentro de la maquina virtual
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=123456
+  
+  pgAdmin:
+    #El "depends_on" es para decir que este contenedor, depende del contenedor anterior "db". Si falla, este no levantara o se creara
+    #depende porque si falla el contenedor anterior, no tiene sentido levantar este ya que no podre conectarme al servicio de base de datos o crear una nueva
+    depends_on:
+      - db
+    image: dpage/pgadmin4:6.17
+    ports:
+     - "8080:80"
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+    environment:
+      - PGADMIN_DEFAULT_PASSWORD=123456
+      - PGADMIN_DEFAULT_EMAIL=superman@google.com
+
+# volumes:
+#   # nombre del contenedor a crear. Es el mismo nombre que se encuentra indicado en la linea 7
+#   postgres-db:
+#     # external en TRUE, es indicar que ya este volumen existe y que no debe crearlo nuevamente
+#     external: true
